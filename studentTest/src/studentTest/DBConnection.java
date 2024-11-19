@@ -53,4 +53,24 @@ public class DBConnection {
 
 	}
 
+	public static void dbClose(Connection con, Statement stmt) {
+		if (con != null) {
+			try {
+				con.close();
+
+			} catch (SQLException e) {
+				System.out.println(e.toString());
+			}
+		}
+		if (stmt != null) {
+			try {
+				stmt.close();
+
+			} catch (SQLException e) {
+				System.out.println(e.toString());
+			}
+		}
+
+	}
+
 }
