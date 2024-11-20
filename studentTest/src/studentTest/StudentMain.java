@@ -78,15 +78,15 @@ public class StudentMain {
 		Statement stmt = null;
 
 		con = DBConnection.dbCon();
-		System.out.println("학생 번호를 입력하세요: ");
+		System.out.print("학생 번호를 입력하세요: ");
 		int stuNum = Integer.parseInt(sc.nextLine());
-		System.out.println("학생 이름을 입력하세요: ");
+		System.out.print("학생 이름을 입력하세요: ");
 		String name = sc.nextLine();
-		System.out.println("국어 점수를 입력하세요: ");
+		System.out.print("국어 점수를 입력하세요: ");
 		int kor = Integer.parseInt(sc.nextLine());
-		System.out.println("영어 점수를 입력하세요: ");
+		System.out.print("영어 점수를 입력하세요: ");
 		int eng = Integer.parseInt(sc.nextLine());
-		System.out.println("수학 점수를 입력하세요: ");
+		System.out.print("수학 점수를 입력하세요: ");
 		int mat = Integer.parseInt(sc.nextLine());
 
 		stmt = con.createStatement();
@@ -102,15 +102,15 @@ public class StudentMain {
 		Statement stmt = null;
 
 		con = DBConnection.dbCon();
-		System.out.println("수정할 학생의 번호를 입력하세요: ");
+		System.out.print("수정할 학생의 번호를 입력하세요: ");
 		int stuNum = Integer.parseInt(sc.nextLine());
-		System.out.println("새로운 이름을 입력하세요: ");
+		System.out.print("새로운 이름을 입력하세요: ");
 		String name = sc.nextLine();
-		System.out.println("새로운 국어 점수를 입력하세요: ");
+		System.out.print("새로운 국어 점수를 입력하세요: ");
 		int kor = Integer.parseInt(sc.nextLine());
-		System.out.println("새로운 영어 점수를 입력하세요: ");
+		System.out.print("새로운 영어 점수를 입력하세요: ");
 		int eng = Integer.parseInt(sc.nextLine());
-		System.out.println("새로운 수학 점수를 입력하세요: ");
+		System.out.print("새로운 수학 점수를 입력하세요: ");
 		int mat = Integer.parseInt(sc.nextLine());
 
 		stmt = con.createStatement();
@@ -126,7 +126,7 @@ public class StudentMain {
 		Statement stmt = null;
 
 		con = DBConnection.dbCon();
-		System.out.println("삭제할 학생 번호를 입력하세요: ");
+		System.out.print("삭제할 학생 번호를 입력하세요: ");
 		int stuNum = Integer.parseInt(sc.nextLine());
 		stmt = con.createStatement();
 		int result = stmt.executeUpdate("DELETE FROM STUDENT WHERE STUNUM = " + stuNum);
