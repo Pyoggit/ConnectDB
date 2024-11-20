@@ -36,8 +36,12 @@ public class BooksMain {
 				booksDelete();
 				break;
 
-			case BookMenu.SALARY_UP:
-				employeeSalaryUp();
+			case BookMenu.SALARY_UP_PROC:
+				employeeSalaryUpProc();
+				break;
+
+			case BookMenu.SALARY_UP_FUNC:
+				employeeSalaryUpFunc();
 				break;
 
 			case BookMenu.EXIT:
@@ -52,26 +56,52 @@ public class BooksMain {
 
 	}
 
-	// 연봉인상 10%
-	private static void employeeSalaryUp() throws SQLException {
+	private static void employeeSalaryUpFunc() throws SQLException {
 		// Conection
 		Connection con = null;
 		CallableStatement cstmt = null;
+
+		// 1 Load, 2. connect
+		con = DBConnection.dbCon();
+		System.out.print("조회 ID 입력: >>");
+		int id = Integer.parseInt(sc.nextLine());
+
+		// 3. cstmt
+		cstmt = con.prepareCall("{ ? = call BOOKS_FUNCTION(?)}");
+		cstmt.registerOutParameter(1, Types.VARCHAR);
+		cstmt.setInt(2, id);
+		// 출력될 데이터값으로 3번을 바인딩시킨다.
+
+		int result = cstmt.executeUpdate();
+		String message = cstmt.getString(1);
+		System.out.println(message);
+		// 4. 내용 체크
+		System.out.println((result != 0) ? "조회 성공" : "조회 실패");
+		// 5. sql 객체 반납
+		DBConnection.dbClose(con, cstmt);
+	}
+
+	// 책값 인상
+	private static void employeeSalaryUpProc() throws SQLException {
+		// Conection
+		Connection con = null;
+		CallableStatement cstmt = null;
+
 		// 1 Load, 2. connect
 		con = DBConnection.dbCon();
 		System.out.print("인상할 ID 입력: >>");
 		int id = Integer.parseInt(sc.nextLine());
-		
+
 		System.out.print("인상금액입력: >>");
 		int price = Integer.parseInt(sc.nextLine());
-		
+
 		// 3. cstmt
 		cstmt = con.prepareCall("{call BOOKS_PROCEDURE(?, ?, ?)}");
 		cstmt.setInt(1, id);
 		cstmt.setInt(2, price);
-		//출력될 데이터값으로 3번을 바인딩시킨다.
+		// 출력될 데이터값으로 3번을 바인딩시킨다.
 		cstmt.registerOutParameter(3, Types.VARCHAR);
-		
+
 		int result = cstmt.executeUpdate();
 		String message = cstmt.getString(3);
 		System.out.println(message);
@@ -180,7 +210,7 @@ public class BooksMain {
 	}
 
 	private static void printMenu() {
-		System.out.println("Books Menu(1.출력, 2.입력, 3.수정, 4.삭제, 5.책값 인상, 6.종료)");
+		System.out.println("Books Menu(1.출력, 2.입력, 3.수정, 4.삭제, 5.책값 인상, 6.책값 조회, 7.종료)");
 		System.out.print(">>");
 	}
 
