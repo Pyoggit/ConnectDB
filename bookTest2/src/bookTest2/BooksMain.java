@@ -63,6 +63,7 @@ public class BooksMain {
 
 		// 1 Load, 2. connect
 		con = DBConnection.dbCon();
+		
 		System.out.print("조회 ID 입력: >>");
 		int id = Integer.parseInt(sc.nextLine());
 
@@ -75,8 +76,10 @@ public class BooksMain {
 		int result = cstmt.executeUpdate();
 		String message = cstmt.getString(1);
 		System.out.println(message);
+		
 		// 4. 내용 체크
 		System.out.println((result != 0) ? "조회 성공" : "조회 실패");
+		
 		// 5. sql 객체 반납
 		DBConnection.dbClose(con, cstmt);
 	}
@@ -105,8 +108,10 @@ public class BooksMain {
 		int result = cstmt.executeUpdate();
 		String message = cstmt.getString(3);
 		System.out.println(message);
+		
 		// 4. 내용 체크
 		System.out.println((result != 0) ? "책값 인상 성공" : "책값 인상 실패");
+		
 		// 5. sql 객체 반납
 		DBConnection.dbClose(con, cstmt);
 
@@ -122,9 +127,11 @@ public class BooksMain {
 
 		// 1 Load, 2. connect
 		con = DBConnection.dbCon();
+		
 		// 3. statement
 		stmt = con.createStatement();
 		rs = stmt.executeQuery("SELECT * FROM BOOKS");
+		
 		// 테이블 가져오기
 		while (rs.next()) {
 			int id = rs.getInt("ID");
@@ -137,6 +144,7 @@ public class BooksMain {
 		}
 		// 출력하기
 		booksListPrint(booksList);
+		
 		// sql 객체 반납
 		DBConnection.dbClose(con, stmt, rs);
 	}
@@ -149,14 +157,17 @@ public class BooksMain {
 
 		// 1 Load, 2. connect
 		con = DBConnection.dbCon();
+		
 		// 3. statement
 		System.out.print("삭제할번호>>");
 		int no = Integer.parseInt(sc.nextLine());
 		pstmt = con.prepareStatement("DELETE FROM BOOKS WHERE ID = ?");
 		pstmt.setInt(1, no);
 		int result = pstmt.executeUpdate();
+		
 		// 4. 내용 체크
 		System.out.println((result != 0) ? "삭제성공" : "삭제실패");
+		
 		// 5. sql 객체 반납
 		DBConnection.dbClose(con, pstmt);
 
@@ -170,6 +181,7 @@ public class BooksMain {
 
 		// 1 Load, 2. connect
 		con = DBConnection.dbCon();
+		
 		// 3. statement
 		// 수정데이터 입력
 		Books books = new Books(3, "Head First JavaScript", "khg", "2024", 59000);
@@ -180,8 +192,10 @@ public class BooksMain {
 		pstmt.setInt(4, books.getPrice());
 		pstmt.setInt(5, books.getId());
 		int result = pstmt.executeUpdate();
+		
 		// 4. 내용 체크
 		System.out.println((result != 0) ? "수정성공" : "수정실패");
+		
 		// 5. sql 객체 반납
 		DBConnection.dbClose(con, pstmt);
 	}
@@ -194,6 +208,10 @@ public class BooksMain {
 
 		// 1 Load, 2. connect
 		con = DBConnection.dbCon();
+		
+		//트랜잭션 시작
+		con.setAutoCommit(false);
+		
 		// 3. statement
 		Books books = new Books(0, "Head First Java", "jjj", "2017", 73000);
 		pstmt = con.prepareStatement("INSERT INTO books VALUES(BOOKS_ID_SEQ.nextval,?,?,?,?)");
@@ -202,8 +220,15 @@ public class BooksMain {
 		pstmt.setString(3, books.getYear());
 		pstmt.setInt(4, books.getPrice());
 		int result = pstmt.executeUpdate();
+		
 		// 4. 내용 체크
 		System.out.println((result != 0) ? "입력성공" : "입력실패");
+		if(result != 0) {
+			con.commit();
+		}else {
+			con.rollback();
+		}
+		
 		// 5. sql 객체 반납
 		DBConnection.dbClose(con, pstmt);
 
