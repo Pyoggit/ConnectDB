@@ -12,10 +12,11 @@ public class DBConnection {
 
 		Connection con = null;
 
-		// 1. jdbc driver load
-		// 2. connection
+		// 1. jdbc driver load 2. connection
 		try {
+			//OracleDriver 클래스를 찾아서 메모리에 로딩
 			Class.forName("oracle.jdbc.driver.OracleDriver");
+			//오라클서버(DB 서버)에 접속 요청을 진행한다.
 			con = DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521/xe", "hr", "hr");
 		} catch (ClassNotFoundException e) {
 			System.out.println(e.toString());
