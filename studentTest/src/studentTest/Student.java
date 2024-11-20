@@ -8,7 +8,6 @@ public class Student {
 	private int mat;
 	
 	public Student(int stuNum, String name, int kor, int eng, int mat) {
-		super();
 		this.stuNum = stuNum;
 		this.name = name;
 		this.kor = kor;
