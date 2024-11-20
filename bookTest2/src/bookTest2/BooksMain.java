@@ -1,5 +1,6 @@
 package bookTest2;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,31 +19,61 @@ public class BooksMain {
 			printMenu();
 			int num = Integer.parseInt(sc.nextLine());
 			switch (num) {
-			case BookMenu.PRINT: 
+			case BookMenu.PRINT:
 				booksPrint();
 				break;
-			
-			case BookMenu.INSERT: 
+
+			case BookMenu.INSERT:
 				booksInsert();
 				break;
-			
-			case BookMenu.UPDATE: 
+
+			case BookMenu.UPDATE:
 				booksUpdate();
 				break;
-			
-			case BookMenu.DELETE: 
+
+			case BookMenu.DELETE:
 				booksDelete();
 				break;
-			
-			case BookMenu.EXIT: 
+
+			case BookMenu.SALARY_UP:
+				employeeSalaryUp();
+				break;
+
+			case BookMenu.EXIT:
 				exitFlag = true;
 				break;
-			
+
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + num);
 			}
 			System.out.println("The end");
 		}
+
+	}
+
+	// 연봉인상 10%
+	private static void employeeSalaryUp() throws SQLException {
+		// Conection
+		Connection con = null;
+		CallableStatement cstmt = null;
+		// 1 Load, 2. connect
+		con = DBConnection.dbCon();
+		System.out.print("인상될 ID 입력: >>");
+		int id = Integer.parseInt(sc.nextLine());
+		
+		System.out.print("인상금액(10%: 1.1)입력: >>");
+		int price = Integer.parseInt(sc.nextLine());
+		
+		// 3. cstmt
+		cstmt = con.prepareCall("{call BOOKS_PROCEDURE(?, ? )}");
+		cstmt.setInt(1, id);
+		cstmt.setDouble(2, price);
+		
+		int result = cstmt.executeUpdate();
+		// 4. 내용 체크
+		System.out.println((result != 0) ? "책값 인상 성공" : "책값 인상 실패");
+		// 5. sql 객체 반납
+		DBConnection.dbClose(con, cstmt);
 
 	}
 
@@ -105,7 +136,7 @@ public class BooksMain {
 		// 1 Load, 2. connect
 		con = DBConnection.dbCon();
 		// 3. statement
-		//수정데이터 입력
+		// 수정데이터 입력
 		Books books = new Books(3, "Head First JavaScript", "khg", "2024", 59000);
 		pstmt = con.prepareStatement("UPDATE BOOKS SET TITLE = ?, PUBLISHER = ?, YEAR = ?, PRICE = ? WHERE ID = ? ");
 		pstmt.setString(1, books.getTitle());
@@ -144,8 +175,13 @@ public class BooksMain {
 	}
 
 	private static void printMenu() {
-		System.out.println("Books Menu(1. select, 2. insert, 3. update, 4. delete, 5. close)");
-		System.out.println(">>");
+		System.out.println("Books Menu(1.출력, 2.입력, 3.수정, 4.삭제, 5.책값 인상, 6.종료)");
+		System.out.print(">>");
+	}
+
+	private static void printEmployeeMenu() {
+		System.out.println("Books Menu");
+		System.out.print(">>");
 	}
 
 	private static void booksListPrint(ArrayList<Books> booksList) {
