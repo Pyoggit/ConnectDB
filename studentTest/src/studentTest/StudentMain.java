@@ -1,41 +1,45 @@
 package studentTest;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class StudentMain {
-
 	public static Scanner sc = new Scanner(System.in);
-	public static final int PRINT = 1, INSERT = 2, UPDATE = 3, DELETE = 4, EXIT = 5;
 
 	public static void main(String[] args) throws SQLException {
 		boolean exitFlag = false;
 		while (!exitFlag) {
-			// 사용자로부터 출력, 입력, 수정, 삭제 요청
 			printMenu();
 			int num = Integer.parseInt(sc.nextLine());
 			switch (num) {
-			case PRINT: {
+			case StuMenu.PRINT: {
 				stuPrint();
 				break;
 			}
-			case INSERT: {
+			case StuMenu.INSERT: {
 				stuInsert();
 				break;
 			}
-			case UPDATE: {
+			case StuMenu.UPDATE: {
 				stuUpdate();
 				break;
 			}
-			case DELETE: {
+			case StuMenu.DELETE: {
 				stuDelete();
 				break;
 			}
-			case EXIT: {
+			case StuMenu.SORT: {
+				stuSort();
+				break;
+			}
+			case StuMenu.EXIT: {
 				exitFlag = true;
 				break;
 			}
@@ -44,6 +48,40 @@ public class StudentMain {
 			}
 			System.out.println("The end");
 		}
+
+	}
+
+	// 정렬
+	private static void stuSort() throws SQLException {
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		ArrayList<Student> stuList = new ArrayList<Student>();
+
+		con = DBConnection.dbCon();
+		stmt = con.createStatement();
+		rs = stmt.executeQuery("SELECT * FROM STUDENT");
+
+		while (rs.next()) {
+			int no = rs.getInt("NO");
+			String name = rs.getString("NAME");
+			int kor = rs.getInt("KOR");
+			int eng = rs.getInt("ENG");
+			int mat = rs.getInt("MAT");
+			int total = rs.getInt("TOTAL");
+			int ave = rs.getInt("AVE");
+			int rank = rs.getInt("RANK");
+
+			Student stu = new Student(no, name, kor, eng, mat, total, ave, rank);
+			stuList.add(stu);
+		}
+
+		// rank 순서대로 정렬
+		Collections.sort(stuList, Comparator.comparingInt(Student::getRank));
+
+		System.out.println("정렬된 학생 정보");
+		stuListPrint(stuList);
+		DBConnection.dbClose(con, stmt, rs);
 
 	}
 
@@ -59,13 +97,16 @@ public class StudentMain {
 		rs = stmt.executeQuery("SELECT * FROM STUDENT");
 
 		while (rs.next()) {
-			int stuNum = rs.getInt("STUNUM");
+			int no = rs.getInt("NO");
 			String name = rs.getString("NAME");
 			int kor = rs.getInt("KOR");
 			int eng = rs.getInt("ENG");
 			int mat = rs.getInt("MAT");
+			int total = rs.getInt("TOTAL");
+			int ave = rs.getInt("AVE");
+			int rank = rs.getInt("RANK");
 
-			Student stu = new Student(stuNum, name, kor, eng, mat);
+			Student stu = new Student(no, name, kor, eng, mat, total, ave, rank);
 			stuList.add(stu);
 		}
 		stuListPrint(stuList);
@@ -74,12 +115,17 @@ public class StudentMain {
 
 	// 입력
 	private static void stuInsert() throws SQLException {
+		// Conection
 		Connection con = null;
-		Statement stmt = null;
+		PreparedStatement pstmt = null;
 
+		// 1 Load, 2. connect
 		con = DBConnection.dbCon();
-		System.out.print("학생 번호를 입력하세요: ");
-		int stuNum = Integer.parseInt(sc.nextLine());
+
+		// 트랜잭션 시작
+		con.setAutoCommit(false);
+
+		// 3.statement
 		System.out.print("학생 이름을 입력하세요: ");
 		String name = sc.nextLine();
 		System.out.print("국어 점수를 입력하세요: ");
@@ -89,21 +135,35 @@ public class StudentMain {
 		System.out.print("수학 점수를 입력하세요: ");
 		int mat = Integer.parseInt(sc.nextLine());
 
-		stmt = con.createStatement();
-		int result = stmt.executeUpdate(
-				"INSERT INTO STUDENT VALUES (" + stuNum + ", '" + name + "', " + kor + ", " + eng + ", " + mat + ")");
+		pstmt = con.prepareStatement(
+				"INSERT INTO STUDENT(NO, NAME, KOR, ENG, MAT) VALUES(STUDENT_NO_SEQ.NEXTVAL, ?, ?, ?, ?)");
+		pstmt.setString(1, name);
+		pstmt.setInt(2, kor);
+		pstmt.setInt(3, eng);
+		pstmt.setInt(4, mat);
+
+		int result = pstmt.executeUpdate();
+
 		System.out.println((result != 0) ? "입력성공" : "입력실패");
-		DBConnection.dbClose(con, stmt);
+		if (result != 0) {
+			con.commit();
+		} else {
+			con.rollback();
+		}
+
+		DBConnection.dbClose(con, pstmt);
 	}
 
 	// 수정
 	private static void stuUpdate() throws SQLException {
 		Connection con = null;
-		Statement stmt = null;
+		PreparedStatement pstmt = null;
 
 		con = DBConnection.dbCon();
+
 		System.out.print("수정할 학생의 번호를 입력하세요: ");
-		int stuNum = Integer.parseInt(sc.nextLine());
+		int no = Integer.parseInt(sc.nextLine());
+
 		System.out.print("새로운 이름을 입력하세요: ");
 		String name = sc.nextLine();
 		System.out.print("새로운 국어 점수를 입력하세요: ");
@@ -113,34 +173,47 @@ public class StudentMain {
 		System.out.print("새로운 수학 점수를 입력하세요: ");
 		int mat = Integer.parseInt(sc.nextLine());
 
-		stmt = con.createStatement();
-		int result = stmt.executeUpdate("UPDATE STUDENT SET NAME = '" + name + "', KOR = " + kor + ", ENG = " + eng
-				+ ", MAT = " + mat + " WHERE STUNUM = " + stuNum);
+		pstmt = con.prepareStatement("UPDATE STUDENT SET NAME = ?, KOR = ?, ENG = ?, MAT = ? WHERE NO = ? ");
+		pstmt.setString(1, name);
+		pstmt.setInt(2, kor);
+		pstmt.setInt(3, eng);
+		pstmt.setInt(4, mat);
+		pstmt.setInt(5, no);
+
+		int result = pstmt.executeUpdate();
+
 		System.out.println((result != 0) ? "수정성공" : "수정실패");
-		DBConnection.dbClose(con, stmt);
+
+		DBConnection.dbClose(con, pstmt);
 	}
 
 	// 삭제
 	private static void stuDelete() throws SQLException {
 		Connection con = null;
-		Statement stmt = null;
+		PreparedStatement pstmt = null;
 
 		con = DBConnection.dbCon();
+
 		System.out.print("삭제할 학생 번호를 입력하세요: ");
-		int stuNum = Integer.parseInt(sc.nextLine());
-		stmt = con.createStatement();
-		int result = stmt.executeUpdate("DELETE FROM STUDENT WHERE STUNUM = " + stuNum);
+		int no = Integer.parseInt(sc.nextLine());
+		pstmt = con.prepareStatement("DELETE FROM STUDENT WHERE NO = ?");
+		pstmt.setInt(1, no);
+		int result = pstmt.executeUpdate();
+
 		System.out.println((result != 0) ? "삭제성공" : "삭제실패");
-		DBConnection.dbClose(con, stmt);
+
+		DBConnection.dbClose(con, pstmt);
 	}
 
+	// 메뉴
 	private static void printMenu() {
 		System.out.println("+++++++++++++++++++++");
 		System.out.println("1.학생정보출력");
 		System.out.println("2.학생정보입력");
 		System.out.println("3.학생정보수정");
 		System.out.println("4.학생정보삭제");
-		System.out.println("5.종료");
+		System.out.println("5.총점순서정렬");
+		System.out.println("6.종료");
 		System.out.println("+++++++++++++++++++++");
 		System.out.print(">>");
 	}
