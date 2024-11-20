@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -58,18 +59,22 @@ public class BooksMain {
 		CallableStatement cstmt = null;
 		// 1 Load, 2. connect
 		con = DBConnection.dbCon();
-		System.out.print("인상될 ID 입력: >>");
+		System.out.print("인상할 ID 입력: >>");
 		int id = Integer.parseInt(sc.nextLine());
 		
-		System.out.print("인상금액(10%: 1.1)입력: >>");
+		System.out.print("인상금액입력: >>");
 		int price = Integer.parseInt(sc.nextLine());
 		
 		// 3. cstmt
-		cstmt = con.prepareCall("{call BOOKS_PROCEDURE(?, ? )}");
+		cstmt = con.prepareCall("{call BOOKS_PROCEDURE(?, ?, ?)}");
 		cstmt.setInt(1, id);
-		cstmt.setDouble(2, price);
+		cstmt.setInt(2, price);
+		//출력될 데이터값으로 3번을 바인딩시킨다.
+		cstmt.registerOutParameter(3, Types.VARCHAR);
 		
 		int result = cstmt.executeUpdate();
+		String message = cstmt.getString(3);
+		System.out.println(message);
 		// 4. 내용 체크
 		System.out.println((result != 0) ? "책값 인상 성공" : "책값 인상 실패");
 		// 5. sql 객체 반납
