@@ -75,7 +75,7 @@ public class StudentDAO {
 		int result2 = cstmt.executeUpdate();
 		System.out.println((result2 != 0) ? "프로시저성공" : "프로시저실패");
 
-		DBUtility.dbClose(con, pstmt);
+		DBUtility.dbClose(con, pstmt, cstmt);
 		successFlag = (result1 != 0 && result2 != 0) ? true : false;
 
 		return successFlag;
@@ -86,6 +86,7 @@ public class StudentDAO {
 	public static boolean studentUpdate(StudentVO svo) throws SQLException {
 		boolean successFlag = false;
 		Connection con = null;
+		CallableStatement cstmt = null;
 		PreparedStatement pstmt = null;
 
 		con = DBUtility.dbCon();
@@ -96,11 +97,14 @@ public class StudentDAO {
 		pstmt.setInt(4, svo.getMat());
 		pstmt.setInt(5, svo.getNo());
 
-		int result = pstmt.executeUpdate();
+		int result1 = pstmt.executeUpdate();
+		
+		cstmt = con.prepareCall(callRankProcSQL);
+		int result2 = cstmt.executeUpdate();
 
-		successFlag = (result != 0) ? true : false;
+		successFlag = (result1 != 0 && result2 != 0) ? true : false;
 
-		DBUtility.dbClose(con, pstmt);
+		DBUtility.dbClose(con,pstmt, cstmt);
 		return successFlag;
 	}
 
