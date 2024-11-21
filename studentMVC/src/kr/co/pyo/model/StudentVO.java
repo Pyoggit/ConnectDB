@@ -112,8 +112,10 @@ public class StudentVO {
 	//String.format();
 	@Override
 	public String toString() {
-		return "[학번 = " + no + ", 이름 = " + name + ", 국어점수 = " + kor + ", 영어점수 = " + eng + ", 수학점수 = " + mat + ", 총점 = "
-				+ total + ", 평균 = " + ave + ", 순위 = " + rank + "]";
+	    return String.format("[학번 = %2d, 이름 = %-5s, 국어점수 = %3d, 영어점수 = %3d, 수학점수 = %3d, 총점 = %3d, 평균 = %3d, 순위 = %2d]",
+	            no, name, kor, eng, mat, total, ave, rank);
+	    
 	}
+
 
 }
