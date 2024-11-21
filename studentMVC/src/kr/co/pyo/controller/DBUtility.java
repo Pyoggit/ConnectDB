@@ -1,5 +1,6 @@
 package kr.co.pyo.controller;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -61,6 +62,34 @@ public class DBUtility {
 			}
 		}
 		if (stmt != null) {
+			try {
+				stmt.close();
+
+			} catch (SQLException e) {
+				System.out.println(e.toString());
+			}
+		}
+
+	}
+
+	public static void dbClose(Connection con, Statement stmt, CallableStatement cstmt) {
+		if (con != null) {
+			try {
+				con.close();
+
+			} catch (SQLException e) {
+				System.out.println(e.toString());
+			}
+		}
+		if (stmt != null) {
+			try {
+				stmt.close();
+
+			} catch (SQLException e) {
+				System.out.println(e.toString());
+			}
+		}
+		if (cstmt != null) {
 			try {
 				stmt.close();
 
