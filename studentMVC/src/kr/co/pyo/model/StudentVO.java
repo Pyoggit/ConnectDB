@@ -1,7 +1,7 @@
 package kr.co.pyo.model;
 
 public class StudentVO {
-	private int no; // ------------pk
+	private int no; // ----------------pk
 	private String name;
 	private int kor;
 	private int eng;
@@ -10,6 +10,7 @@ public class StudentVO {
 	private int ave;
 	private int rank;
 
+	//디폴트 생성자
 	public StudentVO() {}
 	
 	public StudentVO(int no, String name, int kor, int eng, int mat, int total, int ave, int rank) {
@@ -33,7 +34,6 @@ public class StudentVO {
 		this.mat = mat;
 	}
 
-
 	public StudentVO(String name, int kor, int eng, int mat) {
 		super();
 		this.name = name;
@@ -41,6 +41,8 @@ public class StudentVO {
 		this.eng = eng;
 		this.mat = mat;
 	}
+	
+	
 
 	public int getNo() {
 		return no;
