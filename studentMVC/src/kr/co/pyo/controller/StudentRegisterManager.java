@@ -94,11 +94,20 @@ public class StudentRegisterManager {
 
 	// 전체 학생 리스트를 출력
 	public static void printStudentList(ArrayList<StudentVO> studentList) {
-		System.out.println("=============================");
-		for (StudentVO sv : studentList) {
-			System.out.println(sv.toString());
-		}
-		System.out.println("=============================");
+	    System.out.println("==========================================================================");
+	    System.out.printf("%-6s %-6s %8s %6s %6s %6s %6s %6s%n", 
+	                      "학번", "이름", "국어점수", "영어점수", "수학점수", "총점", "평균", "순위");
+	    System.out.println("==========================================================================");
+
+	    for (StudentVO sv : studentList) {
+	        System.out.printf("%-6d %-6s %8d %8d %8d %8d %8d %6d%n",
+	                          sv.getNo(), sv.getName(), sv.getKor(), sv.getEng(), sv.getMat(),
+	                          sv.getTotal(), sv.getAve(), sv.getRank());
+	    }
+
+	    System.out.println("==========================================================================");
 	}
+
+
 
 }
