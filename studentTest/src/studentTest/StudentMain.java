@@ -1,5 +1,6 @@
 package studentTest;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -117,13 +118,14 @@ public class StudentMain {
 	private static void stuInsert() throws SQLException {
 		// Conection
 		Connection con = null;
+		CallableStatement cstmt = null;
 		PreparedStatement pstmt = null;
 
 		// 1 Load, 2. connect
 		con = DBConnection.dbCon();
 
 		// 트랜잭션 시작
-		con.setAutoCommit(false);
+		//con.setAutoCommit(false);
 
 		// 3.statement
 		System.out.print("학생 이름을 입력하세요: ");
@@ -143,13 +145,12 @@ public class StudentMain {
 		pstmt.setInt(4, mat);
 
 		int result = pstmt.executeUpdate();
-
 		System.out.println((result != 0) ? "입력성공" : "입력실패");
-		if (result != 0) {
-			con.commit();
-		} else {
-			con.rollback();
-		}
+
+		cstmt = con.prepareCall("{call STUDENT_RANK_PROC()}");
+		int result1 = cstmt.executeUpdate();
+		System.out.println((result1 != 0) ? "프로시저성공" : "프로시저실패");
+
 
 		DBConnection.dbClose(con, pstmt);
 	}
