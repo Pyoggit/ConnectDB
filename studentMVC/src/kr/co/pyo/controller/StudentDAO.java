@@ -13,6 +13,7 @@ import java.util.Comparator;
 import kr.co.pyo.StudentMVC;
 import kr.co.pyo.model.StudentVO;
 
+
 public class StudentDAO {
 	public static String selectSQL = "SELECT * FROM STUDENT";
 	public static String insertSQL = "INSERT INTO STUDENT(NO, NAME, KOR, ENG, MAT) VALUES(STUDENT_NO_SEQ.NEXTVAL, ?, ?, ?, ?)";
@@ -150,6 +151,7 @@ public class StudentDAO {
 			StudentVO stu = new StudentVO(no, name, kor, eng, mat, total, ave, rank);
 			studentList.add(stu);
 		}
+		Collections.sort(studentList, Comparator.comparingInt(StudentVO::getRank));
 
 		DBUtility.dbClose(con, stmt, rs);
 		return studentList;
