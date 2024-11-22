@@ -18,14 +18,14 @@ public class StudentRegisterManager {
 	public static Scanner sc = new Scanner(System.in);
 
 	// 출력
-	public static void totalSelectManager() throws SQLException {
+	public void selectManager() throws SQLException {
 		ArrayList<StudentVO> studentList = new ArrayList<StudentVO>();
 		studentList = StudentDAO.totalSelect();
 		printStudentList(studentList);
 	}
 
 	// 입력
-	public static void insertManager() throws SQLException {
+	public void insertManager() throws SQLException {
 
 		System.out.print("학생 이름을 입력하세요: ");
 		String name = sc.nextLine();
@@ -47,7 +47,7 @@ public class StudentRegisterManager {
 	}
 
 	// 수정
-	public static void updateManager() throws SQLException {
+	public void updateManager() throws SQLException {
 		System.out.print("수정할 학생의 번호를 입력하세요: ");
 		int no = Integer.parseInt(sc.nextLine());
 		System.out.print("새로운 이름을 입력하세요: ");
@@ -70,7 +70,7 @@ public class StudentRegisterManager {
 	}
 
 	// 삭제
-	public static void deleteManager() throws SQLException {
+	public void deleteManager() throws SQLException {
 		System.out.print("삭제할 학생 번호를 입력하세요: ");
 		int no = Integer.parseInt(sc.nextLine());
 		StudentVO svo = new StudentVO();
@@ -85,7 +85,7 @@ public class StudentRegisterManager {
 	}
 
 	// 정렬
-	public static void sortManager() throws SQLException {
+	public void sortManager() throws SQLException {
 		ArrayList<StudentVO> studentList = null;
 		studentList = StudentDAO.studentSort();
 		printStudentList(studentList);
@@ -93,7 +93,7 @@ public class StudentRegisterManager {
 	}
 
 	// 전체 학생 리스트를 출력
-	public static void printStudentList(ArrayList<StudentVO> studentList) {
+	public void printStudentList(ArrayList<StudentVO> studentList) {
 	    System.out.println("==========================================================================");
 	    System.out.printf("%-6s %-6s %8s %6s %6s %6s %6s %6s%n", 
 	                      "학번", "이름", "국어점수", "영어점수", "수학점수", "총점", "평균", "순위");
