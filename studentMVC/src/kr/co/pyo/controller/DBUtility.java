@@ -108,7 +108,7 @@ public class DBUtility {
 		}
 		if (cstmt != null) {
 			try {
-				stmt.close();
+				cstmt.close();
 
 			} catch (SQLException e) {
 				System.out.println(e.toString());
