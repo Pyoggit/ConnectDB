@@ -121,7 +121,7 @@ public class SubjectMain {
 	// 학생 정보 메뉴
 	private static void studentMenu() throws SQLException {
 		int no;
-		StudentRegisterManager srm = new StudentRegisterManager();
+		StudentRegisterManager strm = new StudentRegisterManager();
 
 		// StudentRegisterManager studnetManager = new StudentRegisterManager();
 		MenuViewer.studentMenuView();
@@ -129,7 +129,7 @@ public class SubjectMain {
 		switch (no) {
 		case STUDENT_CHOICE.INSERT:
 			System.out.println("");
-			srm.insertManager();
+			strm.insertManager();
 			break;
 		case STUDENT_CHOICE.UPDATE:
 			System.out.println("");
@@ -162,19 +162,19 @@ public class SubjectMain {
 		switch (no) {
 		case SUBJECT_CHOICE.LIST:
 			System.out.println("");
-            srm.subjectselectManager();
+            srm.selectManager();
 			break;
 		case SUBJECT_CHOICE.INSERT:
 			System.out.println("");
-			srm.subjectinsertManager();
+			srm.insertManager();
 			break;
 		case SUBJECT_CHOICE.UPDATE:
 			System.out.println("");
-//            studnetManager.studnetUpdate();
+			srm.updateManager();
 			break;
 		case SUBJECT_CHOICE.DELETE:
 			System.out.println("");
-//            studnetManager.studnetTotalList();
+            srm.deleteManager();
 			break;
 		case SUBJECT_CHOICE.MAIN:
 			return;
