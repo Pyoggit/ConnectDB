@@ -28,7 +28,6 @@ public class SubjectMain {
 				switch (no) {
 				case MENU_CHOICE.SUBJECT:
 					subjectMenu();
-					
 					break;
 				case MENU_CHOICE.STUDENT:
 					studentMenu();
@@ -137,11 +136,15 @@ public class SubjectMain {
 			break;
 		case STUDENT_CHOICE.LIST:
 			System.out.println("");
-//            studnetManager.studnetTotalList();
+			strm.selectManager();
 			break;
 		case STUDENT_CHOICE.DELETE:
 			System.out.println("");
 //            studnetManager.studnetTotalList();
+			break;
+		case STUDENT_CHOICE.LIST_ALL:
+			System.out.println("");
+            strm.selectAllManager();
 			break;
 		case STUDENT_CHOICE.MAIN:
 			return;

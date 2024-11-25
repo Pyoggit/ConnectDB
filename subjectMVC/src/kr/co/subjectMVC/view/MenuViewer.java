@@ -34,7 +34,8 @@ public class MenuViewer {
 		System.out.println("2. 학생 정보 입력");
 		System.out.println("3. 학생 전체 수정");
 		System.out.println("4. 학생 정보 삭제");
-		System.out.println("5. 메인 메뉴");
+		System.out.println("5. 학생 소속학과 정보 목록");
+		System.out.println("6. 메인 메뉴");
 		System.out.print("번호 선택 : ");
 	}
 
