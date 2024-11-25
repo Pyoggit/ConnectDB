@@ -125,6 +125,7 @@ public class SubjectRegisterManager {
 	    System.out.println("==========================================================================");
 //	    System.out.printf("%-6s %-6s %8s %6s %6s %6s %6s %6s%n", 
 //	                      "학번", "이름", "국어점수", "영어점수", "수학점수", "총점", "평균", "순위");
+	    System.out.println("학과 정보");
 	    System.out.println("==========================================================================");
 
 	    for (SubjectVO sv : subjectList) {
