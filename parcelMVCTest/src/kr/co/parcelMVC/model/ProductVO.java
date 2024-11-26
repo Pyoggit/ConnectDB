@@ -1,12 +1,13 @@
 package kr.co.parcelMVC.model;
 
 public class ProductVO {
-	private String code; //pk 상품코드
-	private String name; //uq 상품명
-	private int price;   //가격
-	private int remain;  //잔여수량
-	
-	public ProductVO() {}
+	private String code; // pk 상품코드
+	private String name; // uq 상품명
+	private int price; // 가격
+	private int remain; // 잔여수량
+
+	public ProductVO() {
+	}
 
 	public ProductVO(String code, String name, int price, int remain) {
 		super();
@@ -47,10 +48,10 @@ public class ProductVO {
 	public void setRemain(int remain) {
 		this.remain = remain;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "ProductVO [code=" + code + ", name=" + name + ", price=" + price + ", remain=" + remain + "]";
+	    return String.format("[상품코드 = %2s, 상품명 = %-5s, 상품가격 = %3d, 잔여수량 = %3d]", code, name, price, remain);
 	}
 
 }
