@@ -1,12 +1,15 @@
 package kr.co.parcelMVC;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
+import kr.co.parcelMVC.controller.BuyRegisterManager;
+import kr.co.parcelMVC.controller.CompanyRegisterManager;
 import kr.co.parcelMVC.controller.CustomerRegisterManager;
 import kr.co.parcelMVC.controller.ProductRegisterManager;
+import kr.co.parcelMVC.view.BUY_CHOICE;
 import kr.co.parcelMVC.view.MENU_CHOICE;
 import kr.co.parcelMVC.view.MenuViewer;
-import kr.co.parcelMVC.view.PRODUCT_CHOICE;
 
 public class ParcelMVCMain {
 
@@ -45,8 +48,8 @@ public class ParcelMVCMain {
 		} // end of line
 
 	}
-	
-	//고객 정보 메뉴
+
+	// 고객 정보 메뉴
 	private static void customerMenu() {
 		int no;
 		CustomerRegisterManager crm = new CustomerRegisterManager();
@@ -54,71 +57,191 @@ public class ParcelMVCMain {
 		MenuViewer.customerMenuView();
 		no = Integer.parseInt(sc.nextLine());
 		switch (no) {
-		case PRODUCT_CHOICE.LIST:
+		case BUY_CHOICE.LIST:
 			System.out.println("");
-//            studnetManager.studnetTotalList();
+			crm.selectManager();
 			break;
-		case PRODUCT_CHOICE.INSERT:
+		case BUY_CHOICE.INSERT:
 			System.out.println("");
-			// srm.insertManager();
+			try {
+				crm.insertManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			break;
-		case PRODUCT_CHOICE.UPDATE:
+		case BUY_CHOICE.UPDATE:
 			System.out.println("");
-//            studnetManager.studnetUpdate();
+			try {
+				crm.updateManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			break;
-		case PRODUCT_CHOICE.DELETE:
+		case BUY_CHOICE.DELETE:
 			System.out.println("");
-//            studnetManager.studnetTotalList();
+			try {
+				crm.deleteManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			break;
-		case PRODUCT_CHOICE.MAIN:
+		case BUY_CHOICE.MAIN:
 			return;
 		default:
-			System.out.println("해당 메뉴 번호만 입력하세요.");
-		}		
+			System.out.println("해당되는 메뉴 번호만 입력하세요.");
+		}
 	}
-	
-	//상품 정보 메뉴
+
+	// 상품 정보 메뉴
 	private static void productMenu() {
 		int no;
-		ProductRegisterManager crm = new ProductRegisterManager();
+		ProductRegisterManager prm = new ProductRegisterManager();
 
 		MenuViewer.productMenuView();
 		no = Integer.parseInt(sc.nextLine());
 		switch (no) {
-		case PRODUCT_CHOICE.LIST:
+		case BUY_CHOICE.LIST:
 			System.out.println("");
-//            studnetManager.studnetTotalList();
+			try {
+				prm.selectManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			break;
-		case PRODUCT_CHOICE.INSERT:
+		case BUY_CHOICE.INSERT:
 			System.out.println("");
-			// srm.insertManager();
+			try {
+				prm.insertManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			break;
-		case PRODUCT_CHOICE.UPDATE:
+		case BUY_CHOICE.UPDATE:
 			System.out.println("");
-//            studnetManager.studnetUpdate();
+			try {
+				prm.updateManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			break;
-		case PRODUCT_CHOICE.DELETE:
+		case BUY_CHOICE.DELETE:
 			System.out.println("");
-//            studnetManager.studnetTotalList();
+			try {
+				prm.deleteManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			break;
-		case PRODUCT_CHOICE.MAIN:
+		case BUY_CHOICE.MAIN:
 			return;
 		default:
-			System.out.println("해당 메뉴 번호만 입력하세요.");
-		}	
-		
+			System.out.println("해당되는 메뉴 번호만 입력하세요.");
+		}
+
 	}
 
-	//회사 정보 메뉴
+	// 회사 정보 메뉴
 	private static void companyMenu() {
-		// TODO Auto-generated method stub
-		
+		int no;
+		CompanyRegisterManager corm = new CompanyRegisterManager();
+
+		MenuViewer.companyMenuView();
+		no = Integer.parseInt(sc.nextLine());
+		switch (no) {
+		case BUY_CHOICE.LIST:
+			System.out.println("");
+			try {
+				corm.selectManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			break;
+		case BUY_CHOICE.INSERT:
+			System.out.println("");
+			try {
+				corm.insertManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			break;
+		case BUY_CHOICE.UPDATE:
+			System.out.println("");
+			try {
+				corm.updateManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			break;
+		case BUY_CHOICE.DELETE:
+			System.out.println("");
+			try {
+				corm.deleteManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			break;
+		case BUY_CHOICE.MAIN:
+			return;
+		default:
+			System.out.println("해당되는 메뉴 번호만 입력하세요.");
+		}
+
 	}
 
-	//주문 정보 메뉴
+	// 주문 정보 메뉴
 	private static void buyMenu() {
-		// TODO Auto-generated method stub
-		
+		int no;
+		BuyRegisterManager brm = new BuyRegisterManager();
+
+		MenuViewer.buyMenuView();
+		no = Integer.parseInt(sc.nextLine());
+		switch (no) {
+		case BUY_CHOICE.LIST:
+			System.out.println("");
+			try {
+				brm.selectManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			break;
+		case BUY_CHOICE.INSERT:
+			System.out.println("");
+			try {
+				brm.insertManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			break;
+		case BUY_CHOICE.UPDATE:
+			System.out.println("");
+			try {
+				brm.updateManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			break;
+		case BUY_CHOICE.DELETE:
+			System.out.println("");
+			try {
+				brm.deleteManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			break;
+		case BUY_CHOICE.LIST_ALL:
+			System.out.println("");
+			try {
+				brm.selectDetailManager();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			break;	
+		case BUY_CHOICE.MAIN:
+			return;
+		default:
+			System.out.println("해당되는 메뉴 번호만 입력하세요.");
+		}
+
 	}
 
 }
