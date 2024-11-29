@@ -12,32 +12,33 @@ import java.util.ArrayList;
 import kr.co.subjectMVC.model.StudentAllVO;
 import kr.co.subjectMVC.model.StudentVO;
 
-public class StudentDAO {
-	public static final String STUDENT_SELECT = "SELECT * FROM STUDENT";
-	public static final String STUDENT_INSERT = "INSERT INTO STUDENT VALUES(STUDENT_SEQ.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE)";
-	public static final String STUDENT_UPDATE = "UPDATE STUDENT SET NAME = ?, KOR = ?, ENG = ?, MAT = ? WHERE NO = ? ";
-	public static final String STUDENT_DELETE = "DELETE FROM STUDENT WHERE NO = ?";
-	public static final String STUDENT_SORT = "SELECT * FROM STUDENT ORDER BY RANK";
-	public static final String STUDENT_CALLRANKPROC = "{call STUDENT_RANK_PROC()}";
-	public static final String STUDENT_ID_CHECK = "SELECT COUNT(*) AS COUNT  FROM STUDENT WHERE ID = ?";
-	public static final String STUDENT_NUM_COUNT = "SELECT LPAD(COUNT(*)+1,4,'0')AS TOTAL_COUNT FROM STUDENT WHERE S_NUM = ? ";
-	private static final String STUDENT_JOIN_SELECT = "SELECT STU.NO, STU.NUM, STU.NAME, STU.ID, PASSWD, STU.S_NUM, SUB.NAME AS SUBJECT_NAME, BIRTHDAY,PHONE,ADDRESS, EMAIL, SDATE FROM STUDENT STU INNER JOIN SUBJECT SUB ON STU.S_NUM = SUB.NUM";
 
-	// 출력
-	public static ArrayList<StudentVO> studentSelect() {
+
+public class StudentDAO {
+		
+	public static final String STUDENT_SELECT = "SELECT * FROM STUDENT";
+	public static final String STUDENT_SELECT_SEARCH = "SELECT NUM, NAME, EMAIL FROM STUDENT WHERE NAME = ?";
+    public static final String STUDENT_INSERT = "insert into student values(student_seq.nextval, ?, ?, ?, ?, ?, ?, ?, ?, ?, sysdate)";
+    public static final String STUDENT_CALL_RANK_PROC = "{call STUDENT_RANK_PROC()}";
+    public static final String STUDENT_UPDATE = "UPDATE STUDENT SET NAME = ?, KOR = ?, ENG = ?, MAT = ? WHERE NO = ?";
+    public static final String STUDENT_DELETE = "DELETE FROM STUDENT WHERE NO = ?";
+    public static final String STUDENT_SORT = "SELECT *FROM STUDENT ORDER BY RANK";
+    public static final String STUDENT_ID_CHECK = "select COUNT(*) AS COUNT from student where id = ?";
+    public static final String STUDENT_NUM_COUNT ="select LPAD(count(*)+1,4,'0') as TOTAL_COUNT from student where s_num = ?";
+	private static final String STUDENT_SUBJECT_JOIN_SELECT = "SELECT STU.NO, STU.NUM, STU.NAME, STU.ID,PASSWD,STU.S_NUM,SUB.NAME AS SUBJECT_NAME ,BIRTHDAY,PHONE,ADDRESS, EMAIL, SDATE\r\n"
+			+ "FROM STUDENT STU INNER JOIN SUBJECT SUB ON STU.S_NUM = SUB.NUM ";
+	
+    public static ArrayList<StudentVO> studentSelect() {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		ArrayList<StudentVO> studentList = new ArrayList<StudentVO>();
-
 		con = DBUtility.dbCon();
-
 		try {
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(STUDENT_SELECT);
-
-			if (rs.next()) {
-				do {
+			if(rs.next()) {
+				do{
 					int no = rs.getInt("NO");
 					String num = rs.getString("NUM");
 					String name = rs.getString("NAME");
@@ -48,33 +49,61 @@ public class StudentDAO {
 					String phone = rs.getString("PHONE");
 					String address = rs.getString("ADDRESS");
 					String email = rs.getString("EMAIL");
-					Date sdate = rs.getDate("SDATE");			
-
+					Date sdate = rs.getDate("SDATE");
 					StudentVO stu = new StudentVO(no, num, name, id, passwd, s_num, birthday, phone, address, email, sdate);
 					studentList.add(stu);
-				} while (rs.next());
-			} else {
-				studentList = null;
+				}while (rs.next());
+			}else {
+				studentList = null; 
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		} finally {
 			DBUtility.dbClose(con, stmt, rs);
 		}
-
 		return studentList;
 	}
 
-	// 입력
+    //이름검색
+    public static ArrayList<StudentVO> studentNameSelect(String nameValue) {
+		Connection con = null;
+		PreparedStatement pstmt = null; 
+		ResultSet rs = null;
+		ArrayList<StudentVO> studentList = new ArrayList<StudentVO>();
+		con = DBUtility.dbCon();
+		try {
+			pstmt = con.prepareStatement(STUDENT_SELECT_SEARCH);
+			pstmt.setString(1, nameValue);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				do{
+					String num = rs.getString("NUM");
+					String name = rs.getString("NAME");
+					String email = rs.getString("EMAIL");
+					StudentVO stu = new StudentVO();
+					stu.setNum(num);
+					stu.setName(name);
+					stu.setEmail(email);
+					studentList.add(stu);
+				}while (rs.next());
+			}else {
+				studentList = null; 
+			}
+		} catch (SQLException e) {
+			System.out.println(e.toString());
+		} finally {
+			DBUtility.dbClose(con, pstmt, rs);
+		}
+		return studentList;
+	}
+    
 	public static boolean studentInsert(StudentVO svo) {
 		// Conection
-		boolean successFlag = false;
+		boolean successFlag = false; 
 		Connection con = null;
 		PreparedStatement pstmt = null;
-
 		// 1 Load, 2. connect
 		con = DBUtility.dbCon();
-
 		try {
 			pstmt = con.prepareStatement(STUDENT_INSERT);
 			pstmt.setString(1, svo.getNum());
@@ -94,12 +123,11 @@ public class StudentDAO {
 		} finally {
 			DBUtility.dbClose(con, pstmt);
 		}
-		return successFlag;
+		return successFlag; 
 	}
 
-	// 수정
 	public static boolean studentUpdate(StudentVO svo) throws SQLException {
-		boolean successFlag = false;
+		boolean successFlag = false; 
 		Connection con = null;
 		CallableStatement cstmt = null;
 		PreparedStatement pstmt = null;
@@ -107,38 +135,33 @@ public class StudentDAO {
 		con = DBUtility.dbCon();
 		pstmt = con.prepareStatement(STUDENT_UPDATE);
 		pstmt.setString(1, svo.getName());
-		pstmt.setInt(5, svo.getNo());
+		
 
 		int result1 = pstmt.executeUpdate();
-
-		cstmt = con.prepareCall(STUDENT_CALLRANKPROC);
+		cstmt = con.prepareCall(STUDENT_CALL_RANK_PROC);
 		int result2 = cstmt.executeUpdate();
-
+		
 		successFlag = (result1 != 0 && result2 != 0) ? true : false;
 
 		DBUtility.dbClose(con, pstmt, cstmt);
-		return successFlag;
+		return successFlag; 
 	}
 
-	// 삭제
 	public static boolean studentDelete(StudentVO svo) throws SQLException {
-		boolean successFlag = false;
+		boolean successFlag =false; 
 		Connection con = null;
 		PreparedStatement pstmt = null;
 
 		con = DBUtility.dbCon();
-
 		pstmt = con.prepareStatement(STUDENT_DELETE);
 		pstmt.setInt(1, svo.getNo());
 		int result = pstmt.executeUpdate();
-
-		successFlag = (result != 0) ? true : false;
+		successFlag = (result != 0) ? true : false ;
 
 		DBUtility.dbClose(con, pstmt);
-		return successFlag;
+		return successFlag; 
 	}
 
-	// 정렬
 	public static ArrayList<StudentVO> studentSort() throws SQLException {
 		Connection con = null;
 		Statement stmt = null;
@@ -149,68 +172,69 @@ public class StudentDAO {
 		stmt = con.createStatement();
 		rs = stmt.executeQuery(STUDENT_SORT);
 
-		while (rs.next()) {
-			int no = rs.getInt("NO");
-			String name = rs.getString("NAME");
-			int kor = rs.getInt("KOR");
-			int eng = rs.getInt("ENG");
-			int mat = rs.getInt("MAT");
-			int total = rs.getInt("TOTAL");
-			int ave = rs.getInt("AVE");
-			int rank = rs.getInt("RANK");
+		if(rs.next()) {
+			do {
+				int no = rs.getInt("NO");
+				String name = rs.getString("NAME");
+				int kor = rs.getInt("KOR");
+				int eng = rs.getInt("ENG");
+				int mat = rs.getInt("MAT");
+				int total = rs.getInt("TOTAL");
+				int ave = rs.getInt("AVE");
+				int rank = rs.getInt("RANK");
 
-			StudentVO stu = new StudentVO();
-			studentList.add(stu);
+				StudentVO stu = new StudentVO();
+				studentList.add(stu);
+			} while (rs.next());
+		}else {
+			studentList = null; 
 		}
-		// Collections.sort(studentList, Comparator.comparingInt(StudentVO::getRank));
 
 		DBUtility.dbClose(con, stmt, rs);
-		return studentList;
-
+		return studentList; 
 	}
 
-	// 중복 아이디 체크
+	//중복아이디 체크
 	public boolean studentIdCheck(StudentVO svo) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		int count = 0;
+		int count = 0; 
 
 		try {
 			con = DBUtility.dbCon();
 			pstmt = con.prepareStatement(STUDENT_ID_CHECK);
 			pstmt.setString(1, svo.getId());
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
+			rs = pstmt.executeQuery(); 
+			if(rs.next()) {
 				count = rs.getInt("COUNT");
-			} else {
-				count = 0;
+			}else {
+				count = 0; 
 			}
 		} catch (SQLException e) {
 			System.out.println(e.toString());
 		} finally {
 			DBUtility.dbClose(con, pstmt, rs);
 		}
-		return (count != 0) ? (true) : (false);
-
+		return (count != 0)?(true):(false);
 	}
 
-	// 해당 학과번호 총 갯수 STUDENT_NUM_COUNT
+	//해당 학과번호가져오기  01학과 2명있었다. 0003 리턴값을 준다.  
 	public String getStudentCount(StudentVO svo) {
 		Connection con = null;
-		ResultSet rs = null;
 		PreparedStatement pstmt = null;
-		String result = null;
+		ResultSet rs = null;
+		String result = null; 
 
 		con = DBUtility.dbCon();
 		try {
 			pstmt = con.prepareStatement(STUDENT_NUM_COUNT);
 			pstmt.setString(1, svo.getS_num());
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
+			rs = pstmt.executeQuery(); 
+			if(rs.next()) {
 				result = rs.getString("TOTAL_COUNT");
-			} else {
-				result = null;
+			}else {
+				result = null; 
 			}
 		} catch (SQLException e) {
 			System.out.println(e.toString());
@@ -220,21 +244,18 @@ public class StudentDAO {
 		return result;
 	}
 
-	// 학생정보 학과정보 조인 출력
+	//해당학과와 학생정보를 조인해서 정보를 가져오기
 	public ArrayList<StudentAllVO> studentAllSelect() {
 		Connection con = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		ArrayList<StudentAllVO> studentAllList = new ArrayList<StudentAllVO>();
-
 		con = DBUtility.dbCon();
-
 		try {
 			stmt = con.createStatement();
-			rs = stmt.executeQuery(STUDENT_JOIN_SELECT);
-
-			if (rs.next()) {
-				do {
+			rs = stmt.executeQuery(STUDENT_SUBJECT_JOIN_SELECT);
+			if(rs.next()) {
+				do{
 					int no = rs.getInt("NO");
 					String num = rs.getString("NUM");
 					String name = rs.getString("NAME");
@@ -246,20 +267,20 @@ public class StudentDAO {
 					String phone = rs.getString("PHONE");
 					String address = rs.getString("ADDRESS");
 					String email = rs.getString("EMAIL");
-					Date sdate = rs.getDate("SDATE");			
-
-					StudentAllVO stu = new StudentAllVO(no, num, name, id, passwd, s_num, s_name, birthday, phone, address, email, sdate);
+					Date sdate = rs.getDate("SDATE");
+					StudentAllVO stu = 
+							new StudentAllVO(no, num, name, id, passwd, s_num, s_name, birthday, phone, address, email, sdate);
 					studentAllList.add(stu);
-				} while (rs.next());
-			} else {
-				studentAllList = null;
+				}while (rs.next());
+			}else {
+				studentAllList = null; 
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.toString());
 		} finally {
 			DBUtility.dbClose(con, stmt, rs);
 		}
-
 		return studentAllList;
 	}
+
 }

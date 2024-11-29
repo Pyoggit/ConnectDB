@@ -7,6 +7,13 @@ public class LessonVO {
 
 	public LessonVO() {}
 
+	
+	public LessonVO(String abbre, String name) {
+		super();
+		this.abbre = abbre;
+		this.name = name;
+	}
+
 	public LessonVO(int no, String abbre, String name) {
 		super();
 		this.no = no;

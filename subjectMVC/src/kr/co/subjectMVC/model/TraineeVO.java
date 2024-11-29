@@ -2,22 +2,40 @@ package kr.co.subjectMVC.model;
 
 import java.sql.Date;
 
+//T.no, T.section, T.regdate, S.num, S.name as sname, L.abbre, L.name as lname 
 public class TraineeVO {
-	private int no;
-	private String s_num; 	//학번
-	private String abbre;	//과목요약
-	private String section;	//전공
-	private Date tdate;		//수강신청일
-	
-	public TraineeVO() {}
+	private int no; // --pk seq
+	private String s_num; // --student.num(fk) 학생번호
+	private String abbre; // --lesson.abbre(fk) 과목요약
+	private String section; // --전공,부전공,교양
+	private Date regdate; // --수강신청일
+	// Student join
+	private String s_name;
+	// Student join
+	private String l_name;
 
-	public TraineeVO(int no, String s_num, String abbre, String section, Date tdate) {
+	public TraineeVO() {
+	}
+
+	public TraineeVO(int no, String s_num, String abbre, String section, Date regdate) {
 		super();
 		this.no = no;
 		this.s_num = s_num;
 		this.abbre = abbre;
 		this.section = section;
-		this.tdate = tdate;
+		this.regdate = regdate;
+	}
+
+	// 조인을 위한 생성자
+	public TraineeVO(int no, String s_num, String abbre, String section, Date regdate, String s_name, String l_name) {
+		super();
+		this.no = no;
+		this.s_num = s_num;
+		this.abbre = abbre;
+		this.section = section;
+		this.regdate = regdate;
+		this.s_name = s_name;
+		this.l_name = l_name;
 	}
 
 	public int getNo() {
@@ -52,19 +70,39 @@ public class TraineeVO {
 		this.section = section;
 	}
 
-	public Date getTdate() {
-		return tdate;
+	public Date getRegdate() {
+		return regdate;
 	}
 
-	public void setTdate(Date tdate) {
-		this.tdate = tdate;
+	public void setRegdate(Date regdate) {
+		this.regdate = regdate;
+	}
+
+	public String getS_name() {
+		return s_name;
+	}
+
+	public void setS_name(String s_name) {
+		this.s_name = s_name;
+	}
+
+	public String getL_name() {
+		return l_name;
+	}
+
+	public void setL_name(String l_name) {
+		this.l_name = l_name;
 	}
 
 	@Override
 	public String toString() {
-		return "TraineeVO [no=" + no + ", s_num=" + s_num + ", abbre=" + abbre + ", section=" + section + ", tdate="
-				+ tdate + "]";
+		return "TraineeVO [no=" + no + ", s_num=" + s_num + ", abbre=" + abbre + ", section=" + section + ", regdate="
+				+ regdate + "]";
 	}
-	
+
+	public String toAllString() {
+		return "TraineeVO [no=" + no + ", s_num=" + s_num + ", abbre=" + abbre + ", section=" + section + ", regdate="
+				+ regdate + ", s_name=" + s_name + ", l_name=" + l_name + "]";
+	}
 
 }
